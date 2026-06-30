@@ -1,0 +1,611 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RealEstateOS - Marvella Elite Advisory</title>
+    <style>
+        :root {
+            --bg-cream: #F7F5F0;
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --text-dark: #1E1E1E;
+            --text-muted: #626262;
+            --accent-blue: #3A8BFF;
+            --accent-pink: #FF8E9E;
+            --accent-purple: #A385FF;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-pill: 50px;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 12px 32px rgba(31, 38, 135, 0.04);
+            --shadow-inner: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+
+
+        body {
+            background-color: var(--bg-cream); color: var(--text-dark);
+            height: 100vh; height: 100dvh;
+            overflow: hidden; display: flex; flex-direction: column; position: relative;
+        }
+
+
+        /* Ambient Parallax Background */
+        .ambient-glow {
+            position: absolute; width: 50vw; height: 50vw; max-width: 600px; max-height: 600px;
+            border-radius: 50%; pointer-events: none; z-index: 0; filter: blur(100px);
+            opacity: 0.6; mix-blend-mode: multiply; transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #glow-blue { background: radial-gradient(circle, var(--accent-blue) 0%, rgba(255,255,255,0) 70%); top: -10%; left: 0%; }
+        #glow-pink { background: radial-gradient(circle, var(--accent-pink) 0%, rgba(255,255,255,0) 70%); bottom: -10%; right: 0%; }
+        #glow-purple { background: radial-gradient(circle, var(--accent-purple) 0%, rgba(255,255,255,0) 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+
+        /* Main App Container */
+        .os-container {
+            position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column;
+            width: 100%; max-width: 1600px; margin: 0 auto; padding: 20px; gap: 16px;
+        }
+
+
+        /* Screen Management (The Multi-Page Architecture) */
+        .screen {
+            display: none; flex-direction: column; flex: 1; opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease; transform: translateY(20px);
+            overflow-y: auto; overflow-x: hidden;
+            background: var(--glass-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border); border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md), var(--shadow-inner); padding: 30px; gap: 24px;
+        }
+        .screen.active { display: flex; opacity: 1; transform: translateY(0); }
+        .screen::-webkit-scrollbar { width: 0px; background: transparent; }
+
+
+        /* Header Styling */
+        .screen-header { border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 16px; }
+        .screen-title { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+        .screen-subtitle { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+
+        /* Glass Components */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.35); border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-sm);
+            display: flex; flex-direction: column; gap: 16px;
+        }
+        .card-header-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+
+
+        /* Grids & Layouts */
+        .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .grid-3-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+
+
+        /* Live Google Maps Canvas Panel */
+        .map-card { height: 440px; position: relative; overflow: hidden; padding: 0; border: 1px solid var(--glass-border); border-radius: var(--radius-md); }
+        #google-maps-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
+        
+        .map-floating-overlay {
+            position: absolute; top: 16px; left: 16px; z-index: 2; 
+            background: rgba(255,255,255,0.85); padding: 8px 16px; 
+            border-radius: var(--radius-pill); border: 1px solid var(--glass-border); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            box-shadow: var(--shadow-sm); font-size: 14px; font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+
+        /* Tab Scrollers */
+        .tab-scroller { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+        .tab-scroller::-webkit-scrollbar { display: none; }
+        .tab-btn { background: rgba(255,255,255,0.5); border: 1px solid var(--glass-border); padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: var(--radius-pill); cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+        .tab-btn.active { background: #FFFFFF; border-color: var(--text-dark); box-shadow: var(--shadow-sm); }
+
+
+        /* Data Displays */
+        .data-panel-block { background: rgba(255,255,255,0.5); border-radius: var(--radius-md); padding: 18px; border: 1px solid rgba(255,255,255,0.5); display: flex; flex-direction: column; gap: 12px; }
+        .data-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); border-bottom: 1px solid rgba(0,0,0,0.04); padding-bottom: 6px; }
+        .data-row { display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; padding: 4px 0;}
+        .data-subtext { color:var(--text-muted); font-weight:400; font-size:13px; margin-bottom:10px; line-height: 1.4; }
+
+
+        /* Underwriting Controls */
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+        .input-label-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .input-value-display { color: var(--text-dark); font-weight: 700; }
+        input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: var(--radius-pill); background: rgba(0,0,0,0.06); outline: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #FFFFFF; border: 1px solid rgba(0,0,0,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; }
+        
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid rgba(0,0,0,0.04); border-bottom: 1px solid rgba(0,0,0,0.04); }
+        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .toggle-switch input { display: none; }
+        .slider-round { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.08); border-radius: 24px; transition: .3s; }
+        .slider-round:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .3s; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+        input:checked + .slider-round { background-color: var(--accent-blue); }
+        input:checked + .slider-round:before { transform: translateX(20px); }
+
+
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: rgba(255,255,255,0.5); border-radius: var(--radius-md); padding: 16px; border: 1px solid rgba(255,255,255,0.6); }
+        .metric-block { display: flex; flex-direction: column; gap: 4px; }
+        .metric-label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+        .metric-value { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+        .text-blue { color: var(--accent-blue); } .text-purple { color: var(--accent-purple); }
+
+
+        /* Global Dock Navigation */
+        .os-dock {
+            background: var(--glass-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: var(--radius-pill);
+            display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-md);
+            margin: 0 auto 20px auto; width: 100%; max-width: 1000px;
+        }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-btn { background: transparent; border: none; padding: 10px 16px; font-size: 13px; font-weight: 700; color: var(--text-muted); border-radius: var(--radius-pill); cursor: pointer; transition: 0.3s; }
+        .nav-btn.active { background: #FFFFFF; color: var(--text-dark); box-shadow: var(--shadow-sm); }
+        .contact-btn { background: var(--text-dark); color: #FFF; padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: var(--radius-pill); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+
+
+        /* MOBILE RESPONSIVE QUERIES */
+        @media (max-width: 1024px) {
+            .grid-2-col { grid-template-columns: 1fr; }
+            .os-container { padding: 12px; }
+            .screen { padding: 20px; }
+        }
+        @media (max-width: 768px) {
+            .os-dock { flex-direction: column-reverse; gap: 12px; border-radius: var(--radius-md); padding: 16px; }
+            .nav-links { flex-wrap: wrap; justify-content: center; }
+            .screen-title { font-size: 22px; }
+            .map-card { height: 300px; }
+            .metrics-grid { grid-template-columns: 1fr; }
+            .tab-scroller { padding-bottom: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- Ambient Micro-Layers -->
+    <div class="ambient-glow" id="glow-blue"></div>
+    <div class="ambient-glow" id="glow-pink"></div>
+    <div class="ambient-glow" id="glow-purple"></div>
+
+
+    <div class="os-container">
+        
+        <!-- PAGE 1: LIVE GEOGRAPHIC MAP -->
+        <main class="screen active" id="page-1">
+            <div class="screen-header">
+                <h1 class="screen-title">The UAE Macro Reality</h1>
+                <p class="screen-subtitle">Live Interactive Geographic Yield Corridors & Liquidity Hotspots</p>
+            </div>
+            
+            <div class="map-card">
+                <div class="map-floating-overlay">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m16.2 7.8-2 6.3-6.4 2.1 2-6.3z"/></svg>
+                    Live Spatial GIS Infrastructure
+                </div>
+                <!-- Fully Linked Google Maps Mounting Canvas -->
+                <div id="google-maps-container"></div>
+            </div>
+
+
+            <div class="grid-3-col">
+                <div class="data-panel-block">
+                    <div class="data-title">Sovereign Preservation Zones</div>
+                    <div class="data-row"><span>Saadiyat Island (AD)</span><span>Cultural Ultra-Prime</span></div>
+                    <div class="data-row"><span>Downtown Dubai</span><span>Global Anchor</span></div>
+                </div>
+                <div class="data-panel-block">
+                    <div class="data-title">High Velocity Yield Engines</div>
+                    <div class="data-row"><span>Al Reem Island (AD)</span><span>7.0% - 8.0% Net</span></div>
+                    <div class="data-row"><span>Ajman Downtown</span><span>8.5%+ Cash Flow</span></div>
+                </div>
+                <div class="data-panel-block">
+                    <div class="data-title">Emerging Mega Catalysts</div>
+                    <div class="data-row"><span>Al Marjan Island (RAK)</span><span>Wynn Resort Hub</span></div>
+                    <div class="data-row"><span>Dubai South (DWC)</span><span>Airport Phase 2</span></div>
+                </div>
+            </div>
+        </main>
+
+
+        <!-- PAGE 2: DYNAMIC 7-EMIRATE MATRIX -->
+        <main class="screen" id="page-2">
+            <div class="screen-header">
+                <h1 class="screen-title">The Geographic Asset Matrix</h1>
+                <p class="screen-subtitle">District-level performance filtering across all 7 Emirates.</p>
+            </div>
+            
+            <div class="tab-scroller" id="matrix-tabs">
+                <button class="tab-btn active" onclick="switchMatrix('dubai', this)">Dubai</button>
+                <button class="tab-btn" onclick="switchMatrix('abudhabi', this)">Abu Dhabi</button>
+                <button class="tab-btn" onclick="switchMatrix('rak', this)">Ras Al Khaimah</button>
+                <button class="tab-btn" onclick="switchMatrix('sharjah', this)">Sharjah</button>
+                <button class="tab-btn" onclick="switchMatrix('ajman', this)">Ajman</button>
+                <button class="tab-btn" onclick="switchMatrix('uaq', this)">UAQ</button>
+                <button class="tab-btn" onclick="switchMatrix('fujairah', this)">Fujairah</button>
+            </div>
+
+
+            <div class="glass-card">
+                <h3 class="card-header-title" id="matrix-title">Dubai Volume Vectors (2026)</h3>
+                <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;" id="matrix-desc">
+                    Dubai closed with an unprecedented AED 686.8 Billion in sales. While secondary market velocity is stabilizing, off-plan capital deployment has surged to 74% of total market value.
+                </p>
+                
+                <div class="grid-2-col" style="margin-top: 10px;" id="matrix-content">
+                    <!-- Content injected via JS based on selected Emirate -->
+                </div>
+            </div>
+        </main>
+
+
+        <!-- PAGE 3: LEGAL & FRICTION -->
+        <main class="screen" id="page-3">
+            <div class="screen-header">
+                <h1 class="screen-title">Legal Shield & Transaction Friction</h1>
+                <p class="screen-subtitle">Underwriting the exact cost of capital entry, holding, and corporate structuring.</p>
+            </div>
+            
+            <div class="grid-2-col">
+                <div class="glass-card">
+                    <h3 class="card-header-title">Upfront Acquisition Costs</h3>
+                    <div class="data-panel-block" style="background: transparent; border: none; padding: 0;">
+                        <div class="data-row" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 10px;"><span>Dubai Land Dept. (DLD)</span><span>4%</span></div>
+                        <div class="data-row" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 0;"><span>Abu Dhabi (ADM)</span><span>2%</span></div>
+                        <div class="data-row" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 0;"><span>Sharjah (GCC / Expat)</span><span>2% / 4%</span></div>
+                        <div class="data-row" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding: 10px 0;"><span>Northern Emirates Base</span><span>2% - 4%</span></div>
+                        <div class="data-row" style="padding-top: 10px;"><span>Standard Agency Fee</span><span>2% + VAT</span></div>
+                    </div>
+                </div>
+
+
+                <div class="glass-card">
+                    <h3 class="card-header-title">Institutional Wealth Structuring</h3>
+                    <div class="data-panel-block" style="background: rgba(58,139,255,0.05); border-color: rgba(58,139,255,0.2);">
+                        <div class="data-title">The 9% Corporate Tax Shield</div>
+                        <p style="font-size: 13px; line-height: 1.5; color: var(--text-dark);">Individual property ownership remains 0% tax. However, portfolios exceeding AED 375,000 in net profit held in standard corporate LLCs are liable for the 9% CT framework.</p>
+                        <div class="data-title" style="margin-top: 12px;">DIFC / ADGM Private Foundations</div>
+                        <p style="font-size: 13px; line-height: 1.5; color: var(--text-dark);">The ultimate UHNWI vehicle. Bypasses Sharia probate laws, provides absolute privacy, and can be structured as "Tax Transparent" to maintain a 0% liability.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
+        <!-- PAGE 4: INVESTOR UNDERWRITING -->
+        <main class="screen" id="page-4">
+            <div class="screen-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h1 class="screen-title">Investor Underwriting Engine</h1>
+                    <p class="screen-subtitle">Dynamic Yield & Return On Equity (ROE) Calculator</p>
+                </div>
+                
+                <div class="tab-scroller" style="background: rgba(0,0,0,0.04); padding: 4px; border-radius: var(--radius-pill);">
+                    <button class="tab-btn active" onclick="setPersona('amateur', this)">First-Time</button>
+                    <button class="tab-btn" onclick="setPersona('portfolio', this)">Portfolio</button>
+                    <button class="tab-btn" onclick="setPersona('institutional', this)">Institutional</button>
+                </div>
+            </div>
+
+
+            <div class="grid-2-col">
+                <!-- Left: Inputs -->
+                <div class="glass-card">
+                    <div class="input-group">
+                        <div class="input-label-row"><span>Purchase Price</span><span class="input-value-display" id="val-price">AED 1,200,000</span></div>
+                        <input type="range" id="input-price" min="400000" max="15000000" step="50000" value="1200000" oninput="runMath()">
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label-row"><span>Gross Annual Rent</span><span class="input-value-display" id="val-rent">AED 95,000</span></div>
+                        <input type="range" id="input-rent" min="30000" max="1000000" step="5000" value="95000" oninput="runMath()">
+                    </div>
+                    <div class="input-group">
+                        <div class="input-label-row"><span>Service Charges</span><span class="input-value-display" id="val-charges">AED 14,000</span></div>
+                        <input type="range" id="input-charges" min="2000" max="120000" step="1000" value="14000" oninput="runMath()">
+                    </div>
+
+
+                    <div class="toggle-row">
+                        <span style="font-size: 14px; font-weight: 600;">Utilize Bank Leverage</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="input-leverage" checked onchange="runMath()">
+                            <span class="slider-round"></span>
+                        </label>
+                    </div>
+
+
+                    <div id="leverage-box" style="display: flex; flex-direction: column; gap: 16px;">
+                        <div class="input-group">
+                            <div class="input-label-row"><span>Loan-To-Value (LTV)</span><span class="input-value-display" id="val-ltv">75%</span></div>
+                            <input type="range" id="input-ltv" min="20" max="80" step="5" value="75" oninput="runMath()">
+                        </div>
+                        <div class="input-group">
+                            <div class="input-label-row"><span>Fixed Interest Rate</span><span class="input-value-display" id="val-rate">3.85%</span></div>
+                            <input type="range" id="input-rate" min="2.5" max="6.5" step="0.05" value="3.85" oninput="runMath()">
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Right: Outputs -->
+                <div class="glass-card" style="justify-content: center;">
+                    <div class="metrics-grid">
+                        <div class="metric-block">
+                            <span class="metric-label">Gross Yield</span>
+                            <div class="metric-value" id="out-gross">7.92%</div>
+                        </div>
+                        <div class="metric-block">
+                            <span class="metric-label">Net Operating Income</span>
+                            <div class="metric-value" id="out-noi">AED 81,000</div>
+                        </div>
+                        <div class="metric-block">
+                            <span class="metric-label text-blue">Net Property Yield</span>
+                            <div class="metric-value text-blue" id="out-net">6.34%</div>
+                        </div>
+                        <div class="metric-block" id="roe-block">
+                            <span class="metric-label text-purple">Return On Equity (ROE)</span>
+                            <div class="metric-value text-purple" id="out-roe">9.42%</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.03); border-radius: var(--radius-md); padding: 16px; margin-top: 8px;">
+                        <p id="persona-guidance" style="font-size: 13px; line-height: 1.6; color: var(--text-dark);">
+                            <strong>First-Time Strategy:</strong> Maximize the 80% LTV bank mortgage to minimize cash out-of-pocket. Focus entirely on completed, liquid assets to secure immediate positive cash flow.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+
+        <!-- GLOBAL DOCK NAVIGATION -->
+        <nav class="os-dock">
+            <div class="nav-links">
+                <button class="nav-btn active" onclick="navTo(1)">Macro Map</button>
+                <button class="nav-btn" onclick="navTo(2)">Asset Matrix</button>
+                <button class="nav-btn" onclick="navTo(3)">Legal & Fees</button>
+                <button class="nav-btn" style="color: var(--accent-blue);" onclick="navTo(4)">Investor Engine</button>
+            </div>
+            <a href="https://wa.me/971501925007" class="contact-btn" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                Vishal Rao
+            </a>
+        </nav>
+    </div>
+
+
+    <!-- Asynchronous Google Maps API Component Script Injection -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initGoogleMapsEngine"></script>
+
+
+    <script>
+        // --- 1. Page Navigation Logic ---
+        function navTo(pageIndex) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('page-' + pageIndex).classList.add('active');
+            
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns[pageIndex - 1].classList.add('active');
+
+
+            if(pageIndex === 1) { document.getElementById('glow-blue').style.transform = 'translate(0%, 0%)'; }
+            if(pageIndex === 2) { document.getElementById('glow-blue').style.transform = 'translate(50%, 20%)'; }
+            if(pageIndex === 4) { document.getElementById('glow-purple').style.transform = 'translate(-40%, -60%) scale(1.5)'; }
+        }
+
+
+        // --- 2. Live Google Maps Integration Logic ---
+        function initGoogleMapsEngine() {
+            // UAE Centric Viewpoint
+            const centerCoordinates = { lat: 25.1000, lng: 55.4000 };
+            
+            // Vision Pro Cream UI Map Theme
+            const customMapStyle = [
+                { "elementType": "geometry", "stylers": [{ "color": "#f5f5f5" }] },
+                { "elementType": "labels.icon", "stylers": [{ "visibility": "off" }] },
+                { "elementType": "labels.text.fill", "stylers": [{ "color": "#616161" }] },
+                { "elementType": "labels.text.stroke", "stylers": [{ "color": "#f5f5f5" }] },
+                { "featureType": "administrative.land_parcel", "elementType": "labels.text.fill", "stylers": [{ "color": "#bdbdbd" }] },
+                { "featureType": "poi", "elementType": "geometry", "stylers": [{ "color": "#eeeeee" }] },
+                { "featureType": "poi", "elementType": "labels.text.fill", "stylers": [{ "color": "#757575" }] },
+                { "featureType": "road", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }] },
+                { "featureType": "road.arterial", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }] },
+                { "featureType": "road.highway", "elementType": "geometry", "stylers": [{ "color": "#ffffff" }] },
+                { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#e0e6ed" }] }
+            ];
+
+
+            const mapOptions = { zoom: 9, center: centerCoordinates, styles: customMapStyle, disableDefaultUI: true, zoomControl: true, gestureHandling: "cooperative" };
+            const mapInstance = new google.maps.Map(document.getElementById("google-maps-container"), mapOptions);
+
+
+            // Comprehensive UAE Hotspot Coordinates
+            const hotspots = [
+                { name: "Downtown Dubai", pos: { lat: 25.1972, lng: 55.2744 }, details: "Global Premium Preservation Hub" },
+                { name: "Jumeirah Village Circle (JVC)", pos: { lat: 25.0600, lng: 55.2000 }, details: "Mid-Market Yield Engine: 7.5% - 8.5%" },
+                { name: "Dubai South (DWC)", pos: { lat: 24.8980, lng: 55.1610 }, details: "Al Maktoum Airport Infrastructure Corridor" },
+                { name: "Saadiyat Island (Abu Dhabi)", pos: { lat: 24.5420, lng: 54.4330 }, details: "Cultural Ultra-Prime Preservation" },
+                { name: "Al Reem Island (Abu Dhabi)", pos: { lat: 24.4950, lng: 54.4050 }, details: "High-Velocity Institutional Yield Engine" },
+                { name: "Al Marjan Island (RAK)", pos: { lat: 25.6660, lng: 55.7420 }, details: "Wynn Resort Hospitality Surge" },
+                { name: "Aljada (Sharjah)", pos: { lat: 25.3130, lng: 55.4850 }, details: "Integrated High-Density Urban Freehold" },
+                { name: "Ajman Downtown", pos: { lat: 25.3980, lng: 55.4510 }, details: "High-Yield Raw Cash Return Corridor" }
+            ];
+
+
+            hotspots.forEach(spot => {
+                const marker = new google.maps.Marker({ position: spot.pos, map: mapInstance, title: spot.name, animation: google.maps.Animation.DROP });
+                const infoWindow = new google.maps.InfoWindow({ content: `<div style="padding: 8px; font-family: sans-serif;"><strong style="font-size: 14px;">${spot.name}</strong><p style="font-size: 12px; margin-top: 4px; color: #555;">${spot.details}</p></div>` });
+                marker.addListener("click", () => { infoWindow.open(mapInstance, marker); });
+            });
+        }
+
+
+        // --- 3. Dynamic Matrix Engine (Page 2) ---
+        const matrixData = {
+            dubai: {
+                title: "Dubai Value Vectors", desc: "Dubai dictates UAE macro volume. 2026 sees massive stabilization in prime residential, with heavy capital rotation into strategic infrastructure plays.",
+                blocks: [
+                    { title: "High-Density Yield (Mid-Market)", items: [{ n: "JVC & Arjan", d: "Hyper-liquid entry level. Consistently capturing the highest secondary market transaction volume." }] },
+                    { title: "Ultra-Prime Preservation", items: [{ n: "Downtown & Palm Jumeirah", d: "The ultimate legacy assets. Low yield (3-4%), absolute capital safety and wealth sheltering." }, { n: "Dubai Islands", d: "New beachfront catalyst recording major early phase appreciation." }] }
+                ]
+            },
+            abudhabi: {
+                title: "Abu Dhabi Institutional Flow", desc: "The capital operates strictly on institutional-grade infrastructure and sovereign-backed mega projects.",
+                blocks: [
+                    { title: "High-Velocity Yield Engines", items: [{ n: "Al Reem Island", d: "The core urban freehold hub. Outstanding tenant absorption maintaining 7%+ yields." }, { n: "Al Reef", d: "Established commuter estates generating excellent raw ROE for family housing." }] },
+                    { title: "Sovereign Preservation Zones", items: [{ n: "Saadiyat Island", d: "Cultural epicenters (Louvre/Guggenheim). Untouchable ultra-luxury status." }, { n: "Yas Island", d: "Heavy tourism and entertainment catalyst driving sustained capital growth." }] }
+                ]
+            },
+            rak: {
+                title: "Ras Al Khaimah Resort Boom", desc: "RAK is experiencing the most aggressive speculative capital influx globally due to the hospitality catalyst.",
+                blocks: [
+                    { title: "The Mega Catalyst", items: [{ n: "Al Marjan Island", d: "The epicenter of the Wynn Resort ecosystem. Dominated by branded luxury residences." }] },
+                    { title: "Established Residential", items: [{ n: "Mina Al Arab & Al Hamra", d: "Mature beachfront communities experiencing massive knock-on value spikes." }] }
+                ]
+            },
+            sharjah: {
+                title: "Sharjah Freehold Evolution", desc: "Maturing from a spillover market into a completely independent, master-planned freehold powerhouse.",
+                blocks: [
+                    { title: "Mega-Communities", items: [{ n: "Aljada & Tilal City", d: "Massive urban master-plans absorbing significant domestic and expat family demand." }] },
+                    { title: "Specialized Hubs", items: [{ n: "Maryam Island", d: "Sharjah's flagship waterfront freehold." }, { n: "Muwaileh", d: "Academic and student housing corridors offering immense gross yield." }] }
+                ]
+            },
+            ajman: {
+                title: "Ajman High-Yield Corridor", desc: "The undisputed capital for low-entry barrier investments generating outsized raw rental returns.",
+                blocks: [
+                    { title: "Volume Yield Hubs", items: [{ n: "Ajman Downtown", d: "High-density apartment configurations consistently hitting 8% to 9% yields." }] },
+                    { title: "Low-Entry Villas & Townhouses", items: [{ n: "Al Yasmeen & Al Aamra", d: "Extremely attractive entry points for investors seeking land-backed assets." }, { n: "Al Zorah", d: "Premium golf and mangrove luxury preservation." }] }
+                ]
+            },
+            uaq: {
+                title: "Umm Al Quwain Awakening", desc: "Historically quiet, UAQ is aggressively positioning itself in the luxury island ecosystem.",
+                blocks: [
+                    { title: "The Island Catalyst", items: [{ n: "Siniya Island", d: "A newly launched mega-project featuring waterfront villas aiming to replicate the Al Marjan capital effect." }] },
+                    { title: "Legacy Corridors", items: [{ n: "UAQ Marina", d: "Quiet, stable waterfront positioning for long-term holds." }] }
+                ]
+            },
+            fujairah: {
+                title: "Fujairah East Coast Logistics", desc: "The only emirate on the Gulf of Oman, splitting focus between deep-water logistics and eco-tourism.",
+                blocks: [
+                    { title: "Hospitality & Eco-Tourism", items: [{ n: "Al Aqah & Dibba", d: "Dominated by luxury resorts and niche holiday-home investment opportunities." }] },
+                    { title: "Urban Centers", items: [{ n: "Fujairah City Center", d: "Stable, localized residential demand." }] }
+                ]
+            }
+        };
+
+
+        function switchMatrix(emirateKey, btnElement) {
+            // UI Toggle
+            document.getElementById('matrix-tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+
+            // Data Injection
+            const data = matrixData[emirateKey];
+            document.getElementById('matrix-title').innerText = data.title;
+            document.getElementById('matrix-desc').innerText = data.desc;
+            
+            const contentGrid = document.getElementById('matrix-content');
+            contentGrid.innerHTML = '';
+            
+            data.blocks.forEach(block => {
+                let itemsHTML = '';
+                block.items.forEach(item => {
+                    itemsHTML += `<div class="data-row"><span>${item.n}</span></div><div class="data-subtext">${item.d}</div>`;
+                });
+                contentGrid.innerHTML += `<div class="data-panel-block"><div class="data-title">${block.title}</div>${itemsHTML}</div>`;
+            });
+        }
+        
+        // Initialize Matrix to Dubai
+        window.onload = () => {
+            switchMatrix('dubai', document.querySelector('#matrix-tabs .tab-btn.active'));
+            runMath();
+        };
+
+
+        // --- 4. Persona & Math Engine (Page 4) ---
+        const profiles = {
+            'amateur': { p: 1100000, r: 88000, c: 14000, lev: true, ltv: 80, rate: 3.85, text: "<strong>First-Time Strategy:</strong> Maximize the 80% LTV bank mortgage to minimize cash out-of-pocket. Focus entirely on completed, liquid assets to secure immediate positive cash flow." },
+            'portfolio': { p: 3200000, r: 240000, c: 42000, lev: true, ltv: 50, rate: 4.15, text: "<strong>Portfolio Strategy:</strong> Balance ready assets with strategic off-plan acquisitions utilizing developer Post-Handover Payment Plans (PHPP) to maximize equity growth." },
+            'institutional': { p: 8500000, r: 510000, c: 110000, lev: false, ltv: 0, rate: 4.45, text: "<strong>Institutional Strategy:</strong> Cash acquisition through DIFC/ADGM Private Foundations to bypass the 9% Corporate Tax framework and shelter generational wealth." }
+        };
+
+
+        function setPersona(key, btnElement) {
+            btnElement.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+
+            const prof = profiles[key];
+            document.getElementById('input-price').value = prof.p;
+            document.getElementById('input-rent').value = prof.r;
+            document.getElementById('input-charges').value = prof.c;
+            document.getElementById('input-leverage').checked = prof.lev;
+            document.getElementById('input-ltv').value = prof.ltv;
+            document.getElementById('input-rate').value = prof.rate;
+            document.getElementById('persona-guidance').innerHTML = prof.text;
+
+
+            runMath();
+        }
+
+
+        function runMath() {
+            const price = parseFloat(document.getElementById('input-price').value);
+            const rent = parseFloat(document.getElementById('input-rent').value);
+            const charges = parseFloat(document.getElementById('input-charges').value);
+            const isLev = document.getElementById('input-leverage').checked;
+            const ltv = parseFloat(document.getElementById('input-ltv').value);
+            const rate = parseFloat(document.getElementById('input-rate').value) / 100;
+
+
+            document.getElementById('val-price').innerText = "AED " + price.toLocaleString();
+            document.getElementById('val-rent').innerText = "AED " + rent.toLocaleString();
+            document.getElementById('val-charges').innerText = "AED " + charges.toLocaleString();
+            document.getElementById('val-ltv').innerText = ltv + "%";
+            document.getElementById('val-rate').innerText = (rate * 100).toFixed(2) + "%";
+
+
+            document.getElementById('leverage-box').style.display = isLev ? 'flex' : 'none';
+            document.getElementById('roe-block').style.display = isLev ? 'flex' : 'none';
+
+
+            const friction = price * 0.065; 
+            const totalCost = price + friction;
+            
+            const gross = (rent / totalCost) * 100;
+            const noi = rent - charges;
+            const net = (noi / totalCost) * 100;
+
+
+            document.getElementById('out-gross').innerText = gross.toFixed(2) + "%";
+            document.getElementById('out-noi').innerText = "AED " + noi.toLocaleString();
+            document.getElementById('out-net').innerText = net.toFixed(2) + "%";
+
+
+            if(isLev) {
+                const loan = price * (ltv / 100);
+                const cashIn = totalCost - loan;
+                const mRate = rate / 12;
+                const mPay = loan * (mRate * Math.pow(1 + mRate, 300)) / (Math.pow(1 + mRate, 300) - 1);
+                
+                const annualDebt = mPay * 12;
+                const annualInterest = loan * rate;
+                const principalPaid = annualDebt - annualInterest;
+                
+                const cashFlow = noi - annualDebt;
+                const roe = ((cashFlow + principalPaid) / cashIn) * 100;
+                
+                document.getElementById('out-roe').innerText = roe.toFixed(2) + "%";
+            }
+        }
+    </script>
+</body>
+</html>
