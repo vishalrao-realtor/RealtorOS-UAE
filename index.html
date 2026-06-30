@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishal Rao | Marvella Elite Real Estate Advisory</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Variables & Reset */
+        :root {
+            --primary: #1A1A1A;
+            --secondary: #4A4A4A;
+            --accent: #B8905B; /* Elegant Gold/Bronze for high-end feel */
+            --bg-light: #FAFAFA;
+            --bg-white: #FFFFFF;
+            --border: #EAEAEA;
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-body);
+            color: var(--primary);
+            background-color: var(--bg-light);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll, allow vertical */
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 600; line-height: 1.2; }
+        h1 { font-size: 3rem; margin-bottom: 1rem; }
+        h2 { font-size: 2.5rem; margin-bottom: 1.5rem; text-align: center; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+        p { color: var(--secondary); margin-bottom: 1rem; }
+        
+        /* Layout & Containers */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+        
+        .section { padding: 5rem 0; }
+        .section-light { background-color: var(--bg-white); }
+        .section-dark { background-color: var(--primary); color: var(--bg-white); }
+        .section-dark p { color: #CCCCCC; }
+
+        /* Sticky Navigation */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: var(--transition);
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+        .logo { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; text-decoration: none; color: var(--primary); }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--secondary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: var(--transition); }
+        .nav-links a:hover { color: var(--accent); }
+        
+        /* Mobile Menu */
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; background: none; border: none; }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            color: var(--bg-white);
+            text-align: center;
+            padding-top: 80px; /* Offset for navbar */
+        }
+        .hero-content { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        .hero p { color: #F0F0F0; font-size: 1.2rem; font-weight: 300; margin-bottom: 2rem; }
+        
+        .btn {
+            display: inline-block; padding: 1rem 2rem;
+            background-color: var(--accent); color: var(--bg-white);
+            text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            border: 1px solid var(--accent); border-radius: 4px; transition: var(--transition);
+        }
+        .btn:hover { background-color: transparent; color: var(--accent); }
+
+        /* Matrix Grid (CSS Grid for Data) */
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .card {
+            background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: var(--transition);
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .card-tag { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700; display: block; margin-bottom: 0.5rem; }
+
+        /* Underwriting Calculator */
+        .calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+        .input-group { margin-bottom: 1.5rem; }
+        .input-group label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--secondary); }
+        .val-display { color: var(--primary); font-weight: 700; }
+        
+        input[type="range"] {
+            width: 100%; height: 6px; background: var(--border); border-radius: 5px;
+            outline: none; -webkit-appearance: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+            background: var(--accent); cursor: pointer; transition: 0.2s;
+        }
+
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; background: var(--bg-light); padding: 2rem; border-radius: var(--radius); border: 1px solid var(--border); }
+        .result-box { display: flex; flex-direction: column; }
+        .result-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--secondary); margin-bottom: 0.25rem; }
+        .result-value { font-size: 2rem; font-family: var(--font-heading); font-weight: 700; color: var(--primary); }
+        .result-value.highlight { color: var(--accent); }
+
+        /* Legal & Friction Table */
+        .friction-table { width: 100%; border-collapse: collapse; margin-top: 2rem; background: var(--bg-white); border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .friction-table th, .friction-table td { padding: 1.2rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .friction-table th { background-color: var(--bg-light); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--secondary); }
+        .friction-table tr:last-child td { border-bottom: none; }
+        .friction-table strong { color: var(--primary); }
+
+        /* Footer */
+        .footer { background: var(--primary); color: var(--bg-white); padding: 4rem 0 2rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
+        .footer h3 { color: var(--bg-white); margin-bottom: 1.5rem; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; }
+        .footer p { color: #A0A0A0; font-size: 0.9rem; }
+        .footer a { color: var(--accent); text-decoration: none; transition: var(--transition); }
+        .footer a:hover { color: var(--bg-white); }
+        .copyright { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); color: #777; font-size: 0.8rem; }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .calc-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 2rem; }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px);
+                background: var(--bg-white); flex-direction: column; align-items: center;
+                padding-top: 2rem; transition: 0.4s ease; gap: 2rem;
+            }
+            .nav-links.active { left: 0; }
+            .menu-toggle { display: block; }
+            
+            .friction-table, .friction-table tbody, .friction-table tr, .friction-table th, .friction-table td { display: block; width: 100%; }
+            .friction-table tr { margin-bottom: 1rem; border: 1px solid var(--border); }
+            .friction-table td { text-align: right; padding-left: 50%; position: relative; border-bottom: 1px solid var(--border); }
+            .friction-table td::before {
+                content: attr(data-label); position: absolute; left: 1.2rem; width: 45%; padding-right: 10px;
+                white-space: nowrap; text-align: left; font-weight: 600; color: var(--secondary); font-size: 0.8rem; text-transform: uppercase;
+            }
+            .friction-table th { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Marvella Elite.</a>
+            <button class="menu-toggle" id="mobile-menu-btn">☰</button>
+            <ul class="nav-links" id="nav-menu">
+                <li><a href="#macro">Macro Market</a></li>
+                <li><a href="#matrix">Asset Matrix</a></li>
+                <li><a href="#underwriting">Underwriting</a></li>
+                <li><a href="#structuring">Legal & Tax</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Strategic UAE Real Estate Advisory</h1>
+            <p>Moving beyond speculation. We provide institutional-grade underwriting, risk-adjusted yield analysis, and generational wealth structuring across all 7 Emirates.</p>
+            <a href="#underwriting" class="btn">Calculate Your Yield</a>
+        </div>
+    </header>
+
+    <section id="macro" class="section section-light">
+        <div class="container">
+            <h2>The Macro Reality</h2>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto 3rem;">Visualizing active 2026 transactional velocity. We guide capital into high-volume trading zones to ensure optimal deployment and guaranteed secondary-market exit liquidity.</p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <span class="card-tag">Capital Shield</span>
+                    <h3>Sovereign Preservation</h3>
+                    <p><strong>Locations:</strong> Palm Jumeirah (Dubai), Saadiyat Island (Abu Dhabi).</p>
+                    <p>Mature, ultra-luxury zones characterized by limited supply. Acquired strictly for prestige, global liquidity, and capital preservation. Highly resilient against interest rate fluctuations.</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">Yield Engine</span>
+                    <h3>High-Velocity Volume</h3>
+                    <p><strong>Locations:</strong> JVC (Dubai), Al Reem Island (Abu Dhabi), Ajman Downtown.</p>
+                    <p>The core liquidity engines. Driven by overwhelming end-user and young professional demand, these units deliver consistent 7-9% net rental yields with frictionless exits.</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">Growth Play</span>
+                    <h3>Emerging Catalysts</h3>
+                    <p><strong>Locations:</strong> Dubai South (DWC), Al Marjan Island (RAK).</p>
+                    <p>Forward-looking capital appreciation zones driven by federal mega-projects (Al Maktoum Airport expansion, Wynn Resort). Optimized for aggressive equity growth ahead of infrastructure completion.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="underwriting" class="section section-light" style="background-color: var(--bg-white);">
+        <div class="container">
+            <h2>Underwriting Engine</h2>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto 4rem;">Real-time financial modeling factoring in yield leakage, operational holding costs, and 2026 mortgage leverage structures to calculate true Return on Equity.</p>
+            
+            <div class="calc-wrapper">
+                <div class="calc-controls">
+                    <h3 style="font-family: var(--font-body); font-size: 1.1rem; margin-bottom: 2rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px;">Asset Parameters</h3>
+                    
+                    <div class="input-group">
+                        <label><span>Purchase Price</span> <span class="val-display" id="disp-price">AED 1,200,000</span></label>
+                        <input type="range" id="inp-price" min="500000" max="15000000" step="50000" value="1200000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><span>Gross Annual Rent</span> <span class="val-display" id="disp-rent">AED 95,000</span></label>
+                        <input type="range" id="inp-rent" min="40000" max="1000000" step="5000" value="95000">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><span>Annual Service Charges</span> <span class="val-display" id="disp-charges">AED 14,000</span></label>
+                        <input type="range" id="inp-charges" min="5000" max="150000" step="1000" value="14000">
+                    </div>
+
+                    <h3 style="font-family: var(--font-body); font-size: 1.1rem; margin: 3rem 0 2rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px;">Financing Leverage (Mortgage)</h3>
+
+                    <div class="input-group">
+                        <label><span>Loan-To-Value (LTV)</span> <span class="val-display" id="disp-ltv">80%</span></label>
+                        <input type="range" id="inp-ltv" min="0" max="80" step="5" value="80">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><span>Interest Rate (Fixed)</span> <span class="val-display" id="disp-rate">3.85%</span></label>
+                        <input type="range" id="inp-rate" min="2.5" max="6.5" step="0.05" value="3.85">
+                    </div>
+                </div>
+
+                <div class="calc-results">
+                    <div class="results-grid">
+                        <div class="result-box">
+                            <span class="result-label">Gross Yield</span>
+                            <span class="result-value" id="out-gross">0.0%</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Net Operating Income</span>
+                            <span class="result-value" id="out-noi" style="font-size: 1.5rem;">AED 0</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">True Net Yield</span>
+                            <span class="result-value highlight" id="out-net">0.0%</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Return on Equity</span>
+                            <span class="result-value highlight" id="out-roe">0.0%</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 2rem; padding: 1.5rem; background: var(--bg-light); border-left: 4px solid var(--accent); border-radius: 4px;">
+                        <p style="margin-bottom: 0; font-size: 0.9rem; color: var(--primary);"><strong>Consultant Note:</strong> Return on Equity (ROE) measures capital efficiency. By utilizing bank leverage, your cash-on-cash returns dramatically outperform the standard property yield. Calculations include a standard 6.5% buffer for upfront acquisition friction (DLD + Agency Fees).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="structuring" class="section section-light">
+        <div class="container">
+            <h2>Legal Shield & Structuring</h2>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto;">Amateur investors only look at entry prices. Institutional portfolios underwrite the transactional friction and corporate tax shields before deploying capital.</p>
+
+            <table class="friction-table">
+                <thead>
+                    <tr>
+                        <th>Jurisdiction</th>
+                        <th>Gov. Transfer Fee</th>
+                        <th>Standard Agency</th>
+                        <th>Tax Shield / Ownership Structure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Jurisdiction"><strong>Dubai (DLD)</strong></td>
+                        <td data-label="Gov. Transfer Fee">4% of Value</td>
+                        <td data-label="Standard Agency">2% + VAT</td>
+                        <td data-label="Tax Shield">DIFC Foundation (Bypasses local probate)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Jurisdiction"><strong>Abu Dhabi (ADM)</strong></td>
+                        <td data-label="Gov. Transfer Fee">2% of Value</td>
+                        <td data-label="Standard Agency">2% + VAT</td>
+                        <td data-label="Tax Shield">ADGM Foundation (Generational Wealth)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Jurisdiction"><strong>Sharjah</strong></td>
+                        <td data-label="Gov. Transfer Fee">2% GCC / 4% Expat</td>
+                        <td data-label="Standard Agency">2% + VAT</td>
+                        <td data-label="Tax Shield">Standard Freehold / Personal Name (0% Income Tax)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Jurisdiction"><strong>Northern Emirates (RAK/Ajman)</strong></td>
+                        <td data-label="Gov. Transfer Fee">2% - 4% Base</td>
+                        <td data-label="Standard Agency">2% + VAT</td>
+                        <td data-label="Tax Shield">Standard Freehold / Personal Name (0% Income Tax)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="grid-3" style="margin-top: 3rem;">
+                <div class="card" style="background: var(--primary); color: white; grid-column: 1 / -1;">
+                    <h3 style="color: var(--accent);">The 9% Corporate Tax Reality</h3>
+                    <p style="color: #ccc; margin-bottom: 0;">Individual direct property ownership remains 100% tax-exempt in the UAE. However, large portfolios exceeding AED 375,000 in net profit held in standard commercial LLCs are liable for the 9% CT framework. We structure Ultra-High-Net-Worth acquisitions through DIFC or ADGM Private Foundations to ensure 'Tax Transparent' status, maintaining 0% liability across generations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 style="font-family: var(--font-heading); text-transform: none; font-size: 1.8rem; margin-bottom: 0.5rem;">Marvella Elite.</h3>
+                    <p>Strategic Real Estate Advisory</p>
+                </div>
+                <div>
+                    <h3>Advisor</h3>
+                    <p style="font-size: 1.1rem; font-weight: 600; color: var(--bg-white); margin-bottom: 0.5rem;">Vishal Rao</p>
+                    <p>Principal Investment Advisor</p>
+                </div>
+                <div>
+                    <h3>Connect</h3>
+                    <p>For live ROI stress-tests and portfolio allocation strategy, connect directly:</p>
+                    <a href="https://wa.me/971501925007" target="_blank" style="display: inline-block; margin-top: 1rem; font-size: 1.1rem; font-weight: 600;">WhatsApp: +971 50 192 5007 ↗</a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Marvella Elite Real Estate. Data models based on current UAE framework analysis.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 1. Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+        
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            menuBtn.innerText = navMenu.classList.contains('active') ? '✕' : '☰';
+        });
+
+        // Close menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                menuBtn.innerText = '☰';
+            });
+        });
+
+        // 2. Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+            } else {
+                nav.style.boxShadow = 'none';
+            }
+        });
+
+        // 3. Underwriting Math Engine
+        const inputs = ['price', 'rent', 'charges', 'ltv', 'rate'];
+        const elements = {};
+        
+        inputs.forEach(id => {
+            elements[id] = {
+                inp: document.getElementById(`inp-${id}`),
+                disp: document.getElementById(`disp-${id}`)
+            };
+            elements[id].inp.addEventListener('input', calculateMath);
+        });
+
+        function formatCurrency(num) {
+            return 'AED ' + parseInt(num).toLocaleString('en-US');
+        }
+
+        function calculateMath() {
+            // Get Values
+            const price = parseFloat(elements.price.inp.value);
+            const rent = parseFloat(elements.rent.inp.value);
+            const charges = parseFloat(elements.charges.inp.value);
+            const ltv = parseFloat(elements.ltv.inp.value);
+            const rate = parseFloat(elements.rate.inp.value) / 100;
+
+            // Update UI Displays
+            elements.price.disp.innerText = formatCurrency(price);
+            elements.rent.disp.innerText = formatCurrency(rent);
+            elements.charges.disp.innerText = formatCurrency(charges);
+            elements.ltv.disp.innerText = `${ltv}%`;
+            elements.rate.disp.innerText = `${(rate * 100).toFixed(2)}%`;
+
+            // Core Logic (Including 6.5% acquisition friction for DLD/Agency)
+            const friction = price * 0.065;
+            const totalCost = price + friction;
+            const noi = rent - charges;
+            
+            const grossYield = (rent / totalCost) * 100;
+            const netYield = (noi / totalCost) * 100;
+
+            // Outputs
+            document.getElementById('out-gross').innerText = grossYield.toFixed(2) + '%';
+            document.getElementById('out-noi').innerText = formatCurrency(noi);
+            document.getElementById('out-net').innerText = netYield.toFixed(2) + '%';
+
+            // Leveraged ROE Logic
+            if (ltv > 0) {
+                const loan = price * (ltv / 100);
+                const cashIn = totalCost - loan;
+                const mRate = rate / 12;
+                const months = 25 * 12; // Standard 25yr term
+                
+                // Monthly Payment Formula
+                const mPay = loan * (mRate * Math.pow(1 + mRate, months)) / (Math.pow(1 + mRate, months) - 1);
+                
+                const annualDebt = mPay * 12;
+                const annualInterest = loan * rate;
+                const principalPaid = annualDebt - annualInterest;
+                
+                const cashFlow = noi - annualDebt;
+                const roe = ((cashFlow + principalPaid) / cashIn) * 100;
+                
+                document.getElementById('out-roe').innerText = roe.toFixed(2) + '%';
+            } else {
+                // If 0% LTV (Cash buyer), ROE = Net Yield
+                document.getElementById('out-roe').innerText = netYield.toFixed(2) + '%';
+            }
+        }
+
+        // Initialize Calculator
+        calculateMath();
+    </script>
+</body>
+</html>
