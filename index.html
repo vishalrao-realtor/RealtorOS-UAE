@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marvella Elite | Strategic Real Estate Advisory</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CORE VARIABLES --- */
+        :root {
+            --primary: #121212;
+            --secondary: #4A4A4A;
+            --accent: #C39953; /* Elegant Gold */
+            --accent-light: #F4EBE0;
+            --bg-light: #FAFAFA;
+            --bg-white: #FFFFFF;
+            --border: #E5E5E5;
+            --font-head: 'Playfair Display', serif;
+            --font-body: 'Inter', sans-serif;
+            --radius: 4px;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-body); color: var(--primary); background-color: var(--bg-light);
+            line-height: 1.6; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 { font-family: var(--font-head); font-weight: 500; line-height: 1.2; }
+        h1 { font-size: 3.5rem; margin-bottom: 1rem; letter-spacing: -0.5px; }
+        h2 { font-size: 2.5rem; margin-bottom: 1.5rem; text-align: center; }
+        h3 { font-size: 1.5rem; margin-bottom: 1rem; }
+        p { color: var(--secondary); margin-bottom: 1rem; font-size: 1rem; }
+        
+        /* --- LAYOUT --- */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+        .section { padding: 6rem 0; }
+        .section-light { background-color: var(--bg-white); }
+        
+        /* Scroll Animation Class */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* --- NAVIGATION --- */
+        .navbar {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border); padding: 1.2rem 0; transition: var(--transition);
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+        .logo { font-family: var(--font-head); font-size: 1.5rem; font-weight: 700; text-decoration: none; color: var(--primary); letter-spacing: -0.5px; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--secondary); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: var(--transition); }
+        .nav-links a:hover { color: var(--accent); }
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; background: none; border: none; }
+
+        /* --- HERO --- */
+        .hero {
+            height: 100vh; min-height: 600px; display: flex; align-items: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            color: var(--bg-white); text-align: center; padding-top: 80px; background-attachment: fixed;
+        }
+        .hero-content { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        .hero h1 { color: var(--bg-white); }
+        .hero p { color: #E0E0E0; font-size: 1.2rem; font-weight: 300; margin-bottom: 2rem; }
+        .btn {
+            display: inline-block; padding: 1rem 2.5rem; background-color: var(--accent); color: var(--bg-white);
+            text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.85rem;
+            border: 1px solid var(--accent); border-radius: var(--radius); transition: var(--transition); cursor: pointer;
+        }
+        .btn:hover { background-color: transparent; color: var(--accent); }
+
+        /* --- GRID CARDS --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .card {
+            background: var(--bg-white); border: 1px solid var(--border); border-radius: var(--radius);
+            padding: 2.5rem; transition: var(--transition);
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.04); }
+        .card-tag { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 700; display: block; margin-bottom: 1rem; }
+
+        /* --- 7-EMIRATE TAB MATRIX --- */
+        .tab-header { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 1rem; margin-bottom: 2rem; scrollbar-width: none; border-bottom: 1px solid var(--border); }
+        .tab-header::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            background: none; border: none; padding: 1rem 1.5rem; font-family: var(--font-body); font-weight: 600;
+            font-size: 0.9rem; color: var(--secondary); cursor: pointer; transition: var(--transition); white-space: nowrap;
+            border-bottom: 2px solid transparent; margin-bottom: -1px; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+        
+        .tab-content { display: none; animation: fadeEffect 0.5s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeEffect { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+
+        .matrix-row { display: flex; flex-direction: column; gap: 1rem; }
+        .matrix-item { padding: 1.5rem; background: var(--bg-light); border: 1px solid var(--border); border-radius: var(--radius); border-left: 3px solid var(--accent); }
+        .matrix-item h4 { font-family: var(--font-body); font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--primary); }
+
+        /* --- UNDERWRITING ENGINE --- */
+        .persona-selector { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+        .persona-btn {
+            background: var(--bg-white); border: 1px solid var(--border); padding: 1rem 2rem; border-radius: 50px;
+            font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: var(--transition);
+        }
+        .persona-btn.active { background: var(--primary); color: var(--bg-white); border-color: var(--primary); }
+        
+        .calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+        .input-group { margin-bottom: 1.8rem; }
+        .input-group label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--primary); }
+        .val-display { color: var(--accent); font-weight: 700; }
+        
+        input[type="range"] { width: 100%; height: 4px; background: var(--border); border-radius: 4px; outline: none; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--primary); cursor: pointer; border: 2px solid var(--bg-white); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; background: var(--primary); padding: 3rem; border-radius: var(--radius); color: var(--bg-white); }
+        .result-box { display: flex; flex-direction: column; border-left: 2px solid rgba(255,255,255,0.1); padding-left: 1.5rem; }
+        .result-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #A0A0A0; margin-bottom: 0.5rem; }
+        .result-value { font-size: 2.2rem; font-family: var(--font-head); font-weight: 500; color: var(--bg-white); }
+        .result-value.highlight { color: var(--accent); }
+        
+        .strategy-box { margin-top: 2rem; padding: 2rem; background: var(--accent-light); border-radius: var(--radius); }
+        .strategy-box h4 { font-family: var(--font-body); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; color: var(--accent); margin-bottom: 0.5rem; }
+        .strategy-box p { color: var(--primary); margin: 0; font-size: 0.95rem; font-weight: 500; }
+
+        /* --- TABLE --- */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 2rem; background: var(--bg-white); border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.03); overflow: hidden; }
+        .data-table th, .data-table td { padding: 1.5rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .data-table th { background-color: var(--primary); color: var(--bg-white); font-weight: 500; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .data-table strong { color: var(--primary); }
+
+        /* --- FOOTER --- */
+        .footer { background: var(--primary); color: var(--bg-white); padding: 5rem 0 2rem; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 4rem; margin-bottom: 4rem; }
+        .footer h3 { color: var(--bg-white); margin-bottom: 1.5rem; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
+        .footer p { color: #A0A0A0; font-size: 0.9rem; }
+        .footer a { color: var(--accent); text-decoration: none; transition: var(--transition); }
+        .footer a:hover { color: var(--bg-white); }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .calc-wrapper { grid-template-columns: 1fr; gap: 3rem; }
+            h1 { font-size: 2.5rem; } h2 { font-size: 2rem; }
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed; top: 70px; left: -100%; width: 100%; height: calc(100vh - 70px);
+                background: var(--bg-white); flex-direction: column; align-items: center; justify-content: center;
+                transition: 0.4s ease; gap: 2rem;
+            }
+            .nav-links.active { left: 0; }
+            .menu-toggle { display: block; }
+            .results-grid { grid-template-columns: 1fr; padding: 2rem; }
+            
+            .data-table, .data-table tbody, .data-table tr, .data-table th, .data-table td { display: block; width: 100%; }
+            .data-table tr { margin-bottom: 1rem; border: 1px solid var(--border); }
+            .data-table td { text-align: right; padding-left: 50%; position: relative; border-bottom: 1px solid var(--border); }
+            .data-table td::before { content: attr(data-label); position: absolute; left: 1.2rem; width: 45%; text-align: left; font-weight: 600; color: var(--secondary); font-size: 0.8rem; text-transform: uppercase; }
+            .data-table th { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">Marvella Elite.</a>
+            <button class="menu-toggle" id="mobile-menu-btn">☰</button>
+            <ul class="nav-links" id="nav-menu">
+                <li><a href="#macro">Macro Market</a></li>
+                <li><a href="#arbitrage">Off-Plan Arbitrage</a></li>
+                <li><a href="#matrix">Asset Matrix</a></li>
+                <li><a href="#underwriting">Underwriting</a></li>
+                <li><a href="#legal">Legal & Tax</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-content fade-in">
+            <h1>Institutional Real Estate Advisory</h1>
+            <p>Moving beyond speculation. We provide risk-adjusted yield analysis, dynamic asset underwriting, and generational wealth structuring across the UAE.</p>
+            <a href="#underwriting" class="btn">Access Underwriting Engine</a>
+        </div>
+    </header>
+
+    <!-- 1. THE MACRO REALITY -->
+    <section id="macro" class="section section-light">
+        <div class="container fade-in">
+            <h2>The Macro Reality</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 4rem;">With Dubai recording AED 686.8 Billion in sales in 2025, the market is deep but highly concentrated. To guarantee a viable exit strategy, capital must be deployed where transaction velocity is highest.</p>
+            
+            <div class="grid-3">
+                <div class="card">
+                    <span class="card-tag">Liquidity Mandate</span>
+                    <h3>The Volume Kings</h3>
+                    <p>If you buy in a district trading 1,000+ units a month, your exit price is dictated by an active, transparent market. <strong>Jumeirah Village Circle (JVC)</strong> remains the undisputed leader for ready resale volume.</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">Timing The Exit</span>
+                    <h3>The Supply Pipeline</h3>
+                    <p>While new launches dominate headlines, 65% of units under construction are only at 0–20% completion. The massive wave of supply will not physically hit the market until 2027/2028, protecting current entry positions.</p>
+                </div>
+                <div class="card">
+                    <span class="card-tag">Asset Shift</span>
+                    <h3>Studio Superiority</h3>
+                    <p>Driven by affordability, studios captured a 25% volume share of all apartments, delivering the highest capital appreciation over a rolling 3-year period compared to larger unit configurations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. OFF-PLAN VS READY ARBITRAGE -->
+    <section id="arbitrage" class="section">
+        <div class="container fade-in">
+            <div class="grid-2" style="align-items: center;">
+                <div>
+                    <h2>Off-Plan vs. Ready Arbitrage</h2>
+                    <p>Understanding where true Return on Equity (ROE) resides in the current market cycle.</p>
+                    <div style="margin-top: 2rem;">
+                        <h4 style="font-family: var(--font-body); color: var(--primary);">The Off-Plan Leverage (Capital Growth)</h4>
+                        <p>Capturing 75.3% of total market value, off-plan ROE comes from capital efficiency. Controlling an asset with a 10-20% downpayment means any appreciation by handover yields a massive return on deployed cash. <em>Constraint: Developers enforce a strict 30-40% payment threshold before issuing a resale NOC.</em></p>
+                        
+                        <h4 style="font-family: var(--font-body); color: var(--primary); margin-top: 1.5rem;">The Ready "Value-Add" Exit (Income Stability)</h4>
+                        <p>With gross yields sitting securely at 6-8%, ready units provide stabilization. Furthermore, resale price growth is outperforming primary growth (+11.3% vs +6.7%). Acquiring dated units in legacy areas for high-spec renovation is a highly lucrative 2026 exit strategy.</p>
+                    </div>
+                </div>
+                <div style="background: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2075&auto=format&fit=crop') center/cover; height: 100%; min-height: 400px; border-radius: var(--radius);"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. THE 7-EMIRATE MATRIX -->
+    <section id="matrix" class="section section-light">
+        <div class="container fade-in">
+            <h2>Geographic Asset Matrix</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">District-level lifecycle analysis and performance filtering across all 7 Emirates.</p>
+
+            <div class="tab-header">
+                <button class="tab-btn active" onclick="openTab(event, 'Dubai')">Dubai</button>
+                <button class="tab-btn" onclick="openTab(event, 'AbuDhabi')">Abu Dhabi</button>
+                <button class="tab-btn" onclick="openTab(event, 'RAK')">Ras Al Khaimah</button>
+                <button class="tab-btn" onclick="openTab(event, 'Sharjah')">Sharjah</button>
+                <button class="tab-btn" onclick="openTab(event, 'Ajman')">Ajman</button>
+                <button class="tab-btn" onclick="openTab(event, 'UAQ')">Umm Al Quwain</button>
+                <button class="tab-btn" onclick="openTab(event, 'Fujairah')">Fujairah</button>
+            </div>
+
+            <!-- Dubai -->
+            <div id="Dubai" class="tab-content active">
+                <div class="grid-3">
+                    <div class="matrix-item">
+                        <span class="card-tag">Maturation Phase</span>
+                        <h4>JVC, Arjan & Al Furjan</h4>
+                        <p>High-density yield hubs. Route 2020 transit proximity protects asset values. Consistent 7.5-8.2% gross yields.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Preservation Phase</span>
+                        <h4>Palm Jumeirah & Downtown</h4>
+                        <p>The ultimate legacy assets. Low yield (3-4%), but absolute capital safety and global sovereign liquidity.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Expansion Phase</span>
+                        <h4>Dubai South (DWC)</h4>
+                        <p>Highest yield generator (8.5-9.1%) fueled by the $35B Al Maktoum Airport workforce demand.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Abu Dhabi -->
+            <div id="AbuDhabi" class="tab-content">
+                <div class="grid-3">
+                    <div class="matrix-item">
+                        <span class="card-tag">High Velocity</span>
+                        <h4>Al Reem Island</h4>
+                        <p>The core urban freehold hub. Outstanding tenant absorption maintaining 7%+ institutional yields.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Family Estates</span>
+                        <h4>Al Reef</h4>
+                        <p>Established commuter estates generating excellent raw ROE (9.0-9.5%) for family housing.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Sovereign Preservation</span>
+                        <h4>Saadiyat & Yas Island</h4>
+                        <p>Cultural epicenters (Louvre) and heavy entertainment catalysts driving sustained capital growth (+18%).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RAK -->
+            <div id="RAK" class="tab-content">
+                <div class="grid-2">
+                    <div class="matrix-item">
+                        <span class="card-tag">The Mega Catalyst</span>
+                        <h4>Al Marjan Island</h4>
+                        <p>The epicenter of the Wynn Resort ecosystem. Dominated by branded luxury residences experiencing aggressive speculative capital influx.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Established Coastal</span>
+                        <h4>Al Hamra Village & Mina Al Arab</h4>
+                        <p>Mature beachfront communities experiencing massive knock-on value spikes (villa appreciation hitting +41.9%).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sharjah -->
+            <div id="Sharjah" class="tab-content">
+                <div class="grid-3">
+                    <div class="matrix-item">
+                        <span class="card-tag">Mega-Communities</span>
+                        <h4>Aljada & Tilal City</h4>
+                        <p>Integrated urban master-plans absorbing significant domestic family demand.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Academic High-Yield</span>
+                        <h4>Muwaileh</h4>
+                        <p>Student housing corridors offering immense gross yield with vacancy limits under 3%.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Premium Waterfront</span>
+                        <h4>Maryam Island</h4>
+                        <p>Sharjah's flagship luxury waterfront freehold positioning.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ajman -->
+            <div id="Ajman" class="tab-content">
+                <div class="grid-3">
+                    <div class="matrix-item">
+                        <span class="card-tag">Volume Yield Hubs</span>
+                        <h4>Ajman Downtown</h4>
+                        <p>High-density apartment configurations consistently hitting 8.5% to 9% raw cash returns.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Low-Entry Land Assets</span>
+                        <h4>Al Helio & Al Aamra</h4>
+                        <p>Extremely attractive entry points (72-month payment plans) for investors seeking land-backed townhouse assets.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Luxury Preservation</span>
+                        <h4>Al Zorah</h4>
+                        <p>Premium golf and mangrove luxury preservation sectors.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UAQ & Fujairah (Combined for brevity in UI, distinct in code) -->
+            <div id="UAQ" class="tab-content">
+                <div class="grid-2">
+                    <div class="matrix-item">
+                        <span class="card-tag">The Island Catalyst</span>
+                        <h4>Siniya Island</h4>
+                        <p>A newly launched mega-project featuring waterfront villas aiming to replicate the Al Marjan capital effect in Umm Al Quwain.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Legacy Corridors</span>
+                        <h4>UAQ Marina</h4>
+                        <p>Quiet, stable waterfront positioning for long-term holds.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="Fujairah" class="tab-content">
+                <div class="grid-2">
+                    <div class="matrix-item">
+                        <span class="card-tag">Eco-Tourism</span>
+                        <h4>Al Aqah & Dibba</h4>
+                        <p>Dominated by luxury resorts and niche holiday-home investment opportunities tracking seasonal tourism.</p>
+                    </div>
+                    <div class="matrix-item">
+                        <span class="card-tag">Urban Demand</span>
+                        <h4>Fujairah City Center</h4>
+                        <p>Stable, localized residential demand driven by deep-water logistics workforce.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. UNDERWRITING ENGINE -->
+    <section id="underwriting" class="section">
+        <div class="container fade-in">
+            <h2>Investor Underwriting Engine</h2>
+            <p style="text-align: center; max-width: 700px; margin: 0 auto 3rem;">Risk-adjusted financial modeling factoring in yield leakage, operational holding costs, and true Leveraged Return on Equity.</p>
+
+            <div class="persona-selector">
+                <button class="persona-btn active" onclick="setPersona('amateur', this)">First-Time Buyer</button>
+                <button class="persona-btn" onclick="setPersona('portfolio', this)">Intermediate Portfolio</button>
+                <button class="persona-btn" onclick="setPersona('institutional', this)">Institutional Wealth</button>
+            </div>
+
+            <div class="calc-wrapper">
+                <!-- Controls -->
+                <div>
+                    <div class="input-group">
+                        <label><span>Purchase Price</span> <span class="val-display" id="ui-price">AED 1,100,000</span></label>
+                        <input type="range" id="inp-price" min="500000" max="15000000" step="50000" value="1100000">
+                    </div>
+                    <div class="input-group">
+                        <label><span>Gross Annual Rent</span> <span class="val-display" id="ui-rent">AED 88,000</span></label>
+                        <input type="range" id="inp-rent" min="40000" max="1000000" step="2000" value="88000">
+                    </div>
+                    <div class="input-group">
+                        <label><span>Service Charges (Leakage)</span> <span class="val-display" id="ui-charges">AED 14,000</span></label>
+                        <input type="range" id="inp-charges" min="5000" max="150000" step="1000" value="14000">
+                    </div>
+
+                    <div style="margin: 2.5rem 0 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                        <label style="display: flex; justify-content: space-between; font-weight: 600; color: var(--primary); margin-bottom: 1rem;">
+                            Utilize Bank Leverage 
+                            <input type="checkbox" id="inp-leverage" checked style="width: 20px; height: 20px; accent-color: var(--accent);">
+                        </label>
+                    </div>
+
+                    <div id="leverage-group">
+                        <div class="input-group">
+                            <label><span>Loan-To-Value (LTV)</span> <span class="val-display" id="ui-ltv">80%</span></label>
+                            <input type="range" id="inp-ltv" min="20" max="80" step="5" value="80">
+                        </div>
+                        <div class="input-group">
+                            <label><span>Interest Rate (Fixed)</span> <span class="val-display" id="ui-rate">3.85%</span></label>
+                            <input type="range" id="inp-rate" min="2.5" max="6.5" step="0.05" value="3.85">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outputs -->
+                <div>
+                    <div class="results-grid">
+                        <div class="result-box">
+                            <span class="result-label">Gross Yield</span>
+                            <span class="result-value" id="out-gross">0.0%</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Net Operating Income</span>
+                            <span class="result-value" id="out-noi" style="font-size: 1.8rem;">AED 0</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Net Property Yield</span>
+                            <span class="result-value highlight" id="out-net">0.0%</span>
+                        </div>
+                        <div class="result-box" id="roe-box">
+                            <span class="result-label">Return on Equity</span>
+                            <span class="result-value highlight" id="out-roe">0.0%</span>
+                        </div>
+                    </div>
+
+                    <div class="strategy-box">
+                        <h4>Strategic Directive</h4>
+                        <p id="strategy-text">Maximize the 80% LTV bank mortgage to minimize cash out-of-pocket. Focus entirely on completed, liquid assets to secure immediate positive cash flow arbitrage. (Calculations include 6.5% DLD/Agency friction + 5% vacancy buffer).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. LEGAL & TAX SHIELD -->
+    <section id="legal" class="section section-light">
+        <div class="container fade-in">
+            <h2>Legal Shield & Wealth Structuring</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">Institutional portfolios underwrite transactional friction and corporate tax shields before deploying capital. Below is the precise 2026 legal framework.</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Jurisdiction</th>
+                        <th>Gov. Transfer Fee</th>
+                        <th>Standard Agency</th>
+                        <th>Tax Shield / Ownership Structure</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Jurisdiction"><strong>Dubai (DLD)</strong></td>
+                        <td data-label="Gov. Transfer Fee">4% of Value</td>
+                        <td data-label="Standard Agency">2% + VAT</td>
+                        <td data-label="Tax Shield">DIFC Foundation (Bypasses local probate)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Jurisdiction"><strong>Abu Dhabi (ADM)</strong></td>
+                        <td data-label="Gov. Transfer Fee">2% of Value</td>
+                        <td data-label="Standard Agency">2% + VAT</td>
+                        <td data-label="Tax Shield">ADGM Foundation (Generational Wealth)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Jurisdiction"><strong>Sharjah</strong></td>
+                        <td data-label="Gov. Transfer Fee">2% GCC / 4% Expat</td>
+                        <td data-label="Standard Agency">2% + VAT</td>
+                        <td data-label="Tax Shield">Standard Freehold (0% Income Tax)</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Jurisdiction"><strong>Northern Emirates</strong></td>
+                        <td data-label="Gov. Transfer Fee">2% - 4% Base</td>
+                        <td data-label="Standard Agency">2% + VAT</td>
+                        <td data-label="Tax Shield">Standard Freehold (0% Income Tax)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="grid-2" style="margin-top: 3rem; gap: 2rem;">
+                <div class="card" style="background: var(--primary); color: white; border: none;">
+                    <h3 style="color: var(--accent); font-size: 1.2rem;">The 9% Corporate Tax Reality</h3>
+                    <p style="color: #ccc; margin-bottom: 0; font-size: 0.95rem;">Individual ownership remains 100% tax-exempt. However, properties bought through standard mainland LLCs where net profit exceeds AED 375,000 are subject to the 9% CT. Short-term rentals at massive scale can cross into "commercial business activity," triggering both VAT (5%) and Corporate Tax liability.</p>
+                </div>
+                <div class="card" style="background: var(--primary); color: white; border: none;">
+                    <h3 style="color: var(--accent); font-size: 1.2rem;">DIFC / ADGM Foundations</h3>
+                    <p style="color: #ccc; margin-bottom: 0; font-size: 0.95rem;">The ultimate "Orphan" holding structure. It has no shareholders and never dies, meaning properties never go through probate. It legally separates you from personal liability, shields from foreign forced-heirship laws, and utilizes "Tax-Transparent" status to keep yields at 0%.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 style="font-family: var(--font-head); text-transform: none; font-size: 2rem; margin-bottom: 0.5rem; letter-spacing: -0.5px;">Marvella Elite.</h3>
+                    <p>Institutional Real Estate Advisory</p>
+                </div>
+                <div>
+                    <h3>Principal Advisor</h3>
+                    <p style="font-size: 1.2rem; font-weight: 500; color: var(--bg-white); margin-bottom: 0.5rem; font-family: var(--font-head);">Vishal Rao</p>
+                    <p>Structuring portfolios for Ultra-High-Net-Worth individuals and Family Offices.</p>
+                </div>
+                <div>
+                    <h3>Direct Access</h3>
+                    <p>Secure a private strategic allocation consultation:</p>
+                    <a href="https://wa.me/971501925007" target="_blank" style="display: inline-block; margin-top: 1rem; font-size: 1.1rem; font-weight: 600; border-bottom: 1px solid var(--accent); padding-bottom: 2px;">+971 50 192 5007 ↗</a>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); color: #777; font-size: 0.85rem;">
+                <p>&copy; 2026 Marvella Elite. Data models based on current UAE framework analysis.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script>
+        // 1. Mobile Menu & Navbar Scroll
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+        const navbar = document.getElementById('navbar');
+        
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            menuBtn.innerText = navMenu.classList.contains('active') ? '✕' : '☰';
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                menuBtn.innerText = '☰';
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 4px 20px rgba(0,0,0,0.05)';
+                navbar.style.padding = '0.8rem 0';
+            } else {
+                navbar.style.boxShadow = 'none';
+                navbar.style.padding = '1.2rem 0';
+            }
+        });
+
+        // 2. Scroll Fade-In Animation (Intersection Observer)
+        const faders = document.querySelectorAll('.fade-in');
+        const appearOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+        
+        const appearOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            });
+        }, appearOptions);
+
+        faders.forEach(fader => { appearOnScroll.observe(fader); });
+
+        // 3. Tab System (7-Emirate Matrix)
+        function openTab(evt, tabName) {
+            const tabcontent = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; tabcontent[i].classList.remove("active"); }
+            
+            const tablinks = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tablinks.length; i++) { tablinks[i].classList.remove("active"); }
+            
+            const target = document.getElementById(tabName);
+            target.style.display = "block";
+            setTimeout(() => target.classList.add("active"), 10); // trigger animation
+            evt.currentTarget.classList.add("active");
+        }
+
+        // 4. Underwriting Engine & Personas
+        const personaData = {
+            'amateur': { p: 1100000, r: 88000, c: 14000, lev: true, ltv: 80, rt: 3.85, txt: "Maximize the 80% LTV bank mortgage to minimize cash out-of-pocket. Focus entirely on completed, liquid assets to secure immediate positive cash flow arbitrage. (Calculations include 6.5% DLD/Agency friction + 5% vacancy buffer)." },
+            'portfolio': { p: 3200000, r: 240000, c: 42000, lev: true, ltv: 50, rt: 4.15, txt: "Balance portfolio velocity. Utilize 50% LTV across multiple assets or developer Post-Handover Payment Plans (PHPP) to maximize equity multiplication before the 40% assignment threshold." },
+            'institutional': { p: 8500000, r: 510000, c: 110000, lev: false, ltv: 0, rt: 4.50, txt: "Deploy pure capital via DIFC/ADGM Private Foundations. Bypass the 9% Corporate Tax framework, ensure 0% liability, and secure generational wealth sheltering in ultra-prime preservation zones." }
+        };
+
+        const els = {
+            price: document.getElementById('inp-price'), rent: document.getElementById('inp-rent'),
+            charges: document.getElementById('inp-charges'), lev: document.getElementById('inp-leverage'),
+            ltv: document.getElementById('inp-ltv'), rate: document.getElementById('inp-rate')
+        };
+
+        function formatCurrency(num) { return 'AED ' + parseInt(num).toLocaleString('en-US'); }
+
+        function setPersona(key, btn) {
+            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const pd = personaData[key];
+            els.price.value = pd.p; els.rent.value = pd.r; els.charges.value = pd.c;
+            els.lev.checked = pd.lev; els.ltv.value = pd.ltv; els.rate.value = pd.rt;
+            document.getElementById('strategy-text').innerHTML = pd.txt;
+            
+            calcEngine();
+        }
+
+        function calcEngine() {
+            const p = parseFloat(els.price.value);
+            const r = parseFloat(els.rent.value);
+            const c = parseFloat(els.charges.value);
+            const isLev = els.lev.checked;
+            const ltv = parseFloat(els.ltv.value);
+            const rate = parseFloat(els.rate.value) / 100;
+
+            // UI Updates
+            document.getElementById('ui-price').innerText = formatCurrency(p);
+            document.getElementById('ui-rent').innerText = formatCurrency(r);
+            document.getElementById('ui-charges').innerText = formatCurrency(c);
+            document.getElementById('ui-ltv').innerText = `${ltv}%`;
+            document.getElementById('ui-rate').innerText = `${(rate*100).toFixed(2)}%`;
+
+            const levGroup = document.getElementById('leverage-group');
+            const roeBox = document.getElementById('roe-box');
+            levGroup.style.display = isLev ? 'block' : 'none';
+            roeBox.style.display = isLev ? 'flex' : 'none';
+
+            // Risk-Adjusted Math (6.5% Friction + 5% Vacancy/Maintenance buffer)
+            const friction = p * 0.065;
+            const totalCost = p + friction;
+            const riskAdjustedNOI = r - c - (r * 0.05);
+            
+            const gross = (r / totalCost) * 100;
+            const net = (riskAdjustedNOI / totalCost) * 100;
+
+            document.getElementById('out-gross').innerText = `${gross.toFixed(2)}%`;
+            document.getElementById('out-noi').innerText = formatCurrency(riskAdjustedNOI);
+            document.getElementById('out-net').innerText = `${net.toFixed(2)}%`;
+
+            if(isLev) {
+                const loan = p * (ltv / 100);
+                const cashIn = totalCost - loan;
+                const mRate = rate / 12;
+                const months = 25 * 12;
+                const mPay = loan * (mRate * Math.pow(1 + mRate, months)) / (Math.pow(1 + mRate, months) - 1);
+                
+                const annualDebt = mPay * 12;
+                const principalPaid = annualDebt - (loan * rate);
+                const cashFlow = riskAdjustedNOI - annualDebt;
+                
+                const roe = ((cashFlow + principalPaid) / cashIn) * 100;
+                document.getElementById('out-roe').innerText = `${roe.toFixed(2)}%`;
+            }
+        }
+
+        // Bind events
+        Object.values(els).forEach(el => el.addEventListener('input', calcEngine));
+        window.onload = calcEngine;
+    </script>
+</body>
+</html>
